@@ -222,7 +222,7 @@ export default function DashboardPage() {
               الرئيسية
             </h1>
             <p className="text-white/80 font-arabic text-sm sm:text-base">
-              مرحباً بك في نظام إدارة اللوجستيات والمخزون
+              مرحباً بك في نظام الادارة والمخزون
             </p>
           </div>
         </div>

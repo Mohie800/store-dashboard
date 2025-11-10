@@ -58,7 +58,7 @@ export default function LoginPage() {
             </svg>
           </div>
           <h1 className="text-3xl font-bold text-slate-900 font-arabic mb-2">
-            نظام الإدارة اللوجستية
+            نظام الإدارة
           </h1>
           <p className="text-slate-600 font-arabic text-lg">
             قم بتسجيل الدخول للوصول إلى لوحة التحكم
@@ -184,7 +184,7 @@ export default function LoginPage() {
         {/* Bottom Text */}
         <div className="text-center mt-8">
           <p className="text-sm text-slate-500 font-arabic font-medium">
-            © 2025 نظام الإدارة اللوجستية. جميع الحقوق محفوظة.
+            © 2025 نظام الإدارة . جميع الحقوق محفوظة.
           </p>
         </div>
       </div>

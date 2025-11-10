@@ -99,7 +99,7 @@ export default function DashboardLayout({
           لوحة التحكم
         </h2>
         <p className="mt-1 text-xs lg:text-sm text-white/70">
-          نظام إدارة اللوجستيات
+          نظام إدارة المخزون
         </p>
       </div>
 
@@ -144,7 +144,7 @@ export default function DashboardLayout({
 
       {/* Footer */}
       <div className="px-4 pb-6 pt-4 text-center text-xs lg:text-sm text-white/60">
-        <span>© 2025 نظام اللوجستيات</span>
+        <span>© 2025 نظام الادارة والتحكم</span>
       </div>
     </div>
   );

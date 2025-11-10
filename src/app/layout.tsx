@@ -4,8 +4,8 @@ import Providers from "@/components/providers";
 import { Noto_Sans_Arabic } from "next/font/google";
 
 export const metadata: Metadata = {
-  title: "لوحة تحكم المتجر اللوجستي",
-  description: "نظام إدارة متجر الإمدادات اللوجستية",
+  title: "لوحة تحكم الادارة ال",
+  description: "نظام إدارة متجر الإمدادات",
   viewport: {
     width: "device-width",
     initialScale: 1,
