@@ -1,12 +1,17 @@
-import { auth } from "@/lib/auth";
 import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 const publicRoutes = ["/login", "/"];
 const authRoutes = ["/login"];
 
-export default auth((req) => {
+export function middleware(req: NextRequest) {
   const { nextUrl } = req;
-  const isLoggedIn = !!req.auth;
+
+  // Check if user is logged in by looking for the session token
+  const sessionToken =
+    req.cookies.get("authjs.session-token") ||
+    req.cookies.get("__Secure-authjs.session-token");
+  const isLoggedIn = !!sessionToken;
 
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
@@ -15,15 +20,15 @@ export default auth((req) => {
     if (isLoggedIn) {
       return NextResponse.redirect(new URL("/dashboard", nextUrl));
     }
-    return;
+    return NextResponse.next();
   }
 
   if (!isLoggedIn && !isPublicRoute) {
     return NextResponse.redirect(new URL("/login", nextUrl));
   }
 
-  return;
-});
+  return NextResponse.next();
+}
 
 export const config = {
   matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
