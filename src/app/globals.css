@@ -8,7 +8,8 @@
   --border: #e5e7eb;
 }
 
-@media (prefers-color-scheme: dark) {
+/* Force light mode - ignore system preference */
+/* @media (prefers-color-scheme: dark) {
   :root {
     --background: #0f172a;
     --foreground: #f1f5f9;
@@ -16,7 +17,7 @@
     --muted-foreground: #94a3b8;
     --border: #334155;
   }
-}
+} */
 
 * {
   box-sizing: border-box;
