@@ -1,0 +1,307 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
+}
+
+// Authentication & Users
+model User {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  name        String
+  password    String
+  role        Role     @default(USER)
+  permissions Json     @default("{}")
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  accounts       Account[]
+  sessions       Session[]
+  incomingOrders IncomingOrder[]
+  outgoingOrders OutgoingOrder[]
+  inventoryLogs  InventoryLog[]
+  treasuryLogs   TreasuryLog[]
+
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+// Core Business Entities
+model Category {
+  id          String   @id @default(cuid())
+  nameAr      String
+  nameEn      String?
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  items Item[]
+
+  @@map("categories")
+}
+
+model Item {
+  id          String   @id @default(cuid())
+  nameAr      String
+  nameEn      String?
+  description String?
+  sku         String   @unique
+  barcode     String?
+  unit        String   // وحدة القياس
+  minStock    Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  incomingOrderItems IncomingOrderItem[]
+  outgoingOrderItems OutgoingOrderItem[]
+  inventoryLogs      InventoryLog[]
+
+  @@map("items")
+}
+
+model Supplier {
+  id            String   @id @default(cuid())
+  nameAr        String
+  nameEn        String?
+  contactPerson String?
+  phone         String?
+  email         String?
+  address       String?
+  taxNumber     String?
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  incomingOrders IncomingOrder[]
+
+  @@map("suppliers")
+}
+
+model Customer {
+  id           String       @id @default(cuid())
+  nameAr       String
+  nameEn       String?
+  contactPerson String?
+  phone        String?
+  email        String?
+  address      String?
+  taxNumber    String?
+  customerType CustomerType @default(INDIVIDUAL)
+  creditLimit  Decimal      @default(0)
+  isActive     Boolean      @default(true)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  outgoingOrders OutgoingOrder[]
+
+  @@map("customers")
+}
+
+// Orders
+model IncomingOrder {
+  id              String      @id @default(cuid())
+  orderNumber     String      @unique
+  supplierInvoice String? // رقم الفاتورة من المورد
+  totalAmount     Decimal
+  status          OrderStatus @default(PENDING)
+  notes           String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  // Relations
+  supplierId String
+  supplier   Supplier @relation(fields: [supplierId], references: [id])
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+
+  items       IncomingOrderItem[]
+  treasuryLog TreasuryLog?
+
+  @@map("incoming_orders")
+}
+
+model IncomingOrderItem {
+  id         String  @id @default(cuid())
+  quantity   Int
+  unitPrice  Decimal
+  totalPrice Decimal
+  notes      String?
+
+  // Relations
+  orderId String
+  order   IncomingOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  itemId  String
+  item    Item          @relation(fields: [itemId], references: [id])
+
+  @@map("incoming_order_items")
+}
+
+model OutgoingOrder {
+  id          String      @id @default(cuid())
+  orderNumber String      @unique
+  totalAmount Decimal
+  discount    Decimal     @default(0)
+  finalAmount Decimal
+  status      OrderStatus @default(PENDING)
+  notes       String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Relations
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id])
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+
+  items       OutgoingOrderItem[]
+  treasuryLog TreasuryLog?
+
+  @@map("outgoing_orders")
+}
+
+model OutgoingOrderItem {
+  id         String  @id @default(cuid())
+  quantity   Int
+  unitPrice  Decimal
+  totalPrice Decimal
+  notes      String?
+
+  // Relations
+  orderId String
+  order   OutgoingOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  itemId  String
+  item    Item          @relation(fields: [itemId], references: [id])
+
+  @@map("outgoing_order_items")
+}
+
+// Inventory Management
+model InventoryLog {
+  id           String        @id @default(cuid())
+  type         InventoryType
+  quantity     Int
+  currentStock Int
+  provision    String // البند
+  orderId      String? // إذا كان مرتبط بطلبية
+  notes        String?
+  createdAt    DateTime      @default(now())
+
+  // Relations
+  itemId String
+  item   Item   @relation(fields: [itemId], references: [id])
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@map("inventory_logs")
+}
+
+// Treasury Management
+model TreasuryLog {
+  id             String       @id @default(cuid())
+  type           TreasuryType
+  amount         Decimal
+  currentBalance Decimal
+  provision      String // البند
+  description    String?
+  createdAt      DateTime     @default(now())
+
+  // Relations
+  userId          String
+  user            User           @relation(fields: [userId], references: [id])
+  incomingOrderId String?        @unique
+  incomingOrder   IncomingOrder? @relation(fields: [incomingOrderId], references: [id])
+  outgoingOrderId String?        @unique
+  outgoingOrder   OutgoingOrder? @relation(fields: [outgoingOrderId], references: [id])
+
+  @@map("treasury_logs")
+}
+
+// Settings
+model CompanySettings {
+  id         String   @id @default(cuid())
+  nameAr     String
+  nameEn     String?
+  address    String?
+  phone1     String?
+  phone2     String?
+  email      String?
+  taxNumber  String?
+  logo       String?
+  footerText String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("company_settings")
+}
+
+// Enums
+enum Role {
+  ADMIN
+  MANAGER
+  USER
+}
+
+enum CustomerType {
+  INDIVIDUAL
+  COMPANY
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
+enum InventoryType {
+  IN
+  OUT
+  ADJUSTMENT
+}
+
+enum TreasuryType {
+  IN
+  OUT
+  ADJUSTMENT
+}
