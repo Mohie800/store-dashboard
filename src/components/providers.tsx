@@ -77,6 +77,8 @@ export default function Providers({ children }: ProvidersProps) {
         defaultMode="light"
         modeStorageKey="joy-mode"
         disableTransitionOnChange
+        attribute="data-joy-color-scheme"
+        colorSchemeSelector="html"
       >
         <CssBaseline />
         <SessionGuard>{children}</SessionGuard>

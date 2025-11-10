@@ -32,10 +32,12 @@ export default function RootLayout({
       className={`scroll-smooth ${notoArabic.variable}`}
       suppressHydrationWarning={true}
     >
-      <head>
-        <InitColorSchemeScript defaultMode="light" modeStorageKey="joy-mode" />
-      </head>
       <body className="font-arabic antialiased">
+        <InitColorSchemeScript
+          defaultMode="light"
+          modeStorageKey="joy-mode"
+          attribute="data-joy-color-scheme"
+        />
         <Providers>{children}</Providers>
       </body>
     </html>
