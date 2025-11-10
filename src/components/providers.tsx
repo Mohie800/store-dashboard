@@ -3,11 +3,33 @@ import { useEffect, useRef, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { SessionProvider, signOut, useSession } from "next-auth/react";
 import { Toaster } from "react-hot-toast";
-import { CssBaseline, CssVarsProvider, extendTheme } from "@mui/joy";
+import {
+  CssBaseline,
+  CssVarsProvider,
+  extendTheme,
+  useColorScheme,
+} from "@mui/joy";
 
 type ProvidersProps = {
   children: ReactNode;
 };
+
+function ColorSchemeForcer() {
+  const { setMode } = useColorScheme();
+
+  useEffect(() => {
+    // Force light mode on mount
+    setMode("light");
+
+    // Clear any stored dark mode preference
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("joy-mode");
+      localStorage.setItem("joy-mode", "light");
+    }
+  }, [setMode]);
+
+  return null;
+}
 
 function SessionGuard({ children }: ProvidersProps) {
   const { status } = useSession();
@@ -81,6 +103,7 @@ export default function Providers({ children }: ProvidersProps) {
         colorSchemeSelector="html"
       >
         <CssBaseline />
+        <ColorSchemeForcer />
         <SessionGuard>{children}</SessionGuard>
       </CssVarsProvider>
       <Toaster
