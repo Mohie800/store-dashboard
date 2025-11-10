@@ -75,6 +75,7 @@ export default function Providers({ children }: ProvidersProps) {
       <CssVarsProvider
         theme={theme}
         defaultMode="light"
+        modeStorageKey="joy-mode"
         disableTransitionOnChange
       >
         <CssBaseline />

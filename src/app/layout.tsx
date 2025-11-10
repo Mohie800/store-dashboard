@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Providers from "@/components/providers";
 import { Noto_Sans_Arabic } from "next/font/google";
+import InitColorSchemeScript from "@mui/joy/InitColorSchemeScript";
 
 export const metadata: Metadata = {
   title: "لوحة تحكم الادارة ال",
@@ -31,7 +32,9 @@ export default function RootLayout({
       className={`scroll-smooth ${notoArabic.variable}`}
       suppressHydrationWarning={true}
     >
-      <head></head>
+      <head>
+        <InitColorSchemeScript defaultMode="light" modeStorageKey="joy-mode" />
+      </head>
       <body className="font-arabic antialiased">
         <Providers>{children}</Providers>
       </body>
