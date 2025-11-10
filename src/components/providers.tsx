@@ -72,7 +72,11 @@ export default function Providers({ children }: ProvidersProps) {
 
   return (
     <SessionProvider>
-      <CssVarsProvider theme={theme} defaultMode="system">
+      <CssVarsProvider
+        theme={theme}
+        defaultMode="light"
+        disableTransitionOnChange
+      >
         <CssBaseline />
         <SessionGuard>{children}</SessionGuard>
       </CssVarsProvider>

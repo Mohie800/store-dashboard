@@ -623,21 +623,46 @@ export default function TreasuryPage() {
           <Box
             sx={{
               display: "flex",
-              flexWrap: "wrap",
-              alignItems: "center",
+              flexDirection: { xs: "column", sm: "row" },
+              alignItems: { xs: "stretch", sm: "center" },
               justifyContent: "space-between",
               gap: 2,
               mt: 2,
             }}
           >
-            <Typography level="body-sm" sx={{ color: "text.secondary" }}>
+            <Typography
+              level="body-sm"
+              sx={{
+                color: "text.secondary",
+                textAlign: { xs: "center", sm: "right" },
+              }}
+            >
               {totalLogs > 0
                 ? `عرض ${visibleStart}-${visibleEnd} من ${totalLogs} معاملات`
                 : "لا توجد معاملات مطابقة"}
             </Typography>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                <Typography level="body-sm">صفوف لكل صفحة</Typography>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: { xs: "column", sm: "row" },
+                alignItems: "center",
+                gap: 1.5,
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1,
+                  width: { xs: "100%", sm: "auto" },
+                }}
+              >
+                <Typography
+                  level="body-sm"
+                  sx={{ display: { xs: "none", sm: "block" } }}
+                >
+                  صفوف لكل صفحة
+                </Typography>
                 <Select
                   size="sm"
                   value={rowsPerPage}
@@ -649,25 +674,42 @@ export default function TreasuryPage() {
                     setRowsPerPage(newValue > 0 ? newValue : rowsPerPage);
                     setPage(1);
                   }}
-                  sx={{ minWidth: 100 }}
+                  sx={{ minWidth: { xs: "100%", sm: 100 } }}
+                  slotProps={{
+                    button: {
+                      sx: { width: { xs: "100%", sm: "auto" } },
+                    },
+                  }}
                 >
                   <Option value={10}>10</Option>
                   <Option value={25}>25</Option>
                   <Option value={50}>50</Option>
                 </Select>
               </Box>
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1,
+                  width: { xs: "100%", sm: "auto" },
+                }}
+              >
                 <Button
                   variant="outlined"
                   size="sm"
                   disabled={page === 1 || totalLogs === 0 || logsLoading}
                   onClick={() => setPage((prev) => Math.max(1, prev - 1))}
+                  sx={{ flex: { xs: 1, sm: "0 0 auto" } }}
                 >
                   السابق
                 </Button>
                 <Typography
                   level="body-sm"
-                  sx={{ minWidth: 80, textAlign: "center" }}
+                  sx={{
+                    minWidth: { xs: "auto", sm: 80 },
+                    textAlign: "center",
+                    whiteSpace: "nowrap",
+                  }}
                 >
                   صفحة {displayPage} من {displayTotalPages}
                 </Typography>
@@ -682,6 +724,7 @@ export default function TreasuryPage() {
                       totalPages === 0 ? prev : Math.min(totalPages, prev + 1)
                     )
                   }
+                  sx={{ flex: { xs: 1, sm: "0 0 auto" } }}
                 >
                   التالي
                 </Button>
